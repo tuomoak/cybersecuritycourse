@@ -1,5 +1,7 @@
+from datetime import datetime
+
 from django.shortcuts import get_object_or_404,render
-from django.http import Http404
+from django.http import Http404, request
 from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
@@ -67,9 +69,13 @@ class IndexView(generic.ListView):
     context_object_name = 'posts'
 
     def get_queryset(self):
-        """Return the last five published questions."""
-        return Post.objects.all().order_by("-created")
-        
+        """
+        Return the last five published questions (not including those set to be
+        published in the future).
+        """
+        return Post.objects.filter(created__lte=timezone.now()
+        ).order_by('-created')
+            
 class DetailView(generic.DetailView):
     model = Post
     template_name = 'polls/detail.html'
@@ -104,10 +110,12 @@ def vote(request, post_id):
         })
               
     post.save()
-        
-    #selected_choice.votes += 1
-    #selected_choice.save()
+
     # Always return an HttpResponseRedirect after successfully dealing
     # with POST data. This prevents data from being posted twice if a
     # user hits the Back button.
     return HttpResponseRedirect(reverse('polls:detail', args=(post.id,)))
+
+def was_published_recently(self):
+    now = timezone.now()
+    return now - datetime.timedelta(days=1) <= self.created <= now
