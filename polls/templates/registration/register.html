@@ -1,0 +1,15 @@
+<a href="{% url 'polls:index' %}">Home page</a>
+
+<h1>Register</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">Create User</button>
+</form>
+
+<p>
+    Do you already have an account?
+    <a href="{% url 'login' %}">Log in</a>
+</p>

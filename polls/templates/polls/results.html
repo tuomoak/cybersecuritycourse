@@ -1,0 +1,8 @@
+<h1>{{ postaus.otsikko }}</h1>
+
+<p>Yläpeukut: {{ postaus.upvotes }}</p>
+<p>Alapeukut: {{ postaus.downvotes }}</p>
+    
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<a href="{% url 'polls:detail' post.id %}">Vote again?</a>

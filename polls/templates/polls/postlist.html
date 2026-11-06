@@ -1,0 +1,24 @@
+<h1>Posts</h1>
+
+{% if user.is_authenticated %}
+    <p>Logged in as: {{ user.username }}</p>
+
+    <a href="{% url 'polls:add_post' %}">Add New Post</a>
+
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Log out</button>
+    </form>
+{% else %}
+    <a href="{% url 'login' %}">Log in</a>
+{% endif %}
+
+<hr>
+
+{% for post in posts %}
+    <h2>{{ post.title }}</h2>
+    <p>{{ post.content }}</p>
+    <small>Added by: {{ post.author.username }}</small>
+{% empty %}
+    <p>No posts available.</p>
+{% endfor %}

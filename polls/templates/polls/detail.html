@@ -1,0 +1,13 @@
+<a href="{% url 'polls:index' %}">Home page</a>
+
+<h1>{{ post.title }} ({{ post.votes }})</h1>
+<p>{{ post.content }}</p>
+<p>Upvotes: {{ post.upvotes }} Downvotes: {{ post.downvotes }}</p>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'polls:vote' post.id %}" method="post">
+{% csrf_token %}
+<button type="submit" name="vote" value="upvote">Upvote</button>
+<button type="submit" name="vote" value="downvote">Downvote</button>
+</form>

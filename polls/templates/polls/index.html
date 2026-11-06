@@ -1,0 +1,33 @@
+
+
+{% if user.is_authenticated %}
+    <p>Logged in as: {{ user.username }}</p>
+
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Log out</button>
+    </form>
+
+    <p><a href="{% url 'polls:add_post' %}">Add New Post</a></p>
+
+    
+{% else %}
+    <a href="{% url 'login' %}">Log in</a>
+{% endif %}
+
+<h1>Posts</h1>
+<hr>
+    
+{% for post in posts %}
+    <p><a href="/polls/{{ post.id }}/">{{ post.title }}</a> ({{ post.votes }})</p>
+    <small>Added by: {{ post.author.username }}</small>
+           
+    {% if post.author.username == user.username %}
+        <form method="post" action="{% url 'polls:remove_post' post.id %}">
+            {% csrf_token %}
+            <button type="submit">Delete</button>
+        </form>
+    {% endif %}
+    {% empty %}
+    <p>No posts available.</p>
+{% endfor %}

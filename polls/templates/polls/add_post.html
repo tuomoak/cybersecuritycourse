@@ -1,0 +1,23 @@
+<a href="{% url 'polls:index' %}">Home page</a>
+
+<h1>Add Post</h1>
+
+{% if user.is_authenticated %}
+    <p>Logged in as: {{ user.username }}</p>
+
+    <a href="{% url 'polls:add_post' %}">Add New Post</a>
+
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Log out</button>
+    </form>
+{% else %}
+    <a href="{% url 'login' %}">Log in</a>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">Save</button>
+</form>
