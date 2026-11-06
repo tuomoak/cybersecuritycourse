@@ -8,8 +8,6 @@ from django.contrib.auth.models import User
 
 from .models import Post
 
-#from polls.app import user
-
 def create_post(title, days):
     
     """
@@ -61,16 +59,12 @@ class PostIndexViewTests(TestCase):
         self.assertContains(response, "No posts are available.")
         self.assertQuerySetEqual(response.context['posts'], [])
         
-        #self.assertQuerySetEqual(response.context['latest_post_list'], [])
-
     def test_past_post(self):
         """
         Posts with a created date in the past are displayed on the
         index page.
         """
         
-        #time = timezone.now() - datetime.timedelta(days=1, seconds=1)
-        #old_post = Post(created=time)
         create_post(title="Test Post", days=-30)
         response = self.client.get(reverse('polls:index'))
         self.assertQuerySetEqual(

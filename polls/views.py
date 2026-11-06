@@ -1,9 +1,7 @@
 from datetime import datetime
 
 from django.shortcuts import get_object_or_404,render
-from django.http import Http404, request
-from django.template import loader
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .models import Post
 from django.views import generic
@@ -47,7 +45,8 @@ def add_post(request):
     return render(request, "polls/add_post.html", {"form": form})
 
 def postlist(request):
-    posts = Post.objects.all().order_by("-created")
+    posts = Post.objects.filter(created__lte=timezone.now()
+            ).order_by('-created')    
     return render(request, "polls/index.html", {"posts": posts})
 
 def remove_post(request, post_id):
@@ -70,7 +69,7 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         """
-        Return the last five published questions (not including those set to be
+        Return published posts (not including those set to be
         published in the future).
         """
         return Post.objects.filter(created__lte=timezone.now()
@@ -82,7 +81,7 @@ class DetailView(generic.DetailView):
     
     def get_queryset(self):
         """
-        Excludes any questions that aren't published yet.
+        Excludes any posts that aren't published yet.
         """
         return Post.objects.filter(created__lte=timezone.now())
         
@@ -115,7 +114,3 @@ def vote(request, post_id):
     # with POST data. This prevents data from being posted twice if a
     # user hits the Back button.
     return HttpResponseRedirect(reverse('polls:detail', args=(post.id,)))
-
-def was_published_recently(self):
-    now = timezone.now()
-    return now - datetime.timedelta(days=1) <= self.created <= now
