@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from django.contrib import messages
+#from django.core.checks import messages
 from django.shortcuts import get_object_or_404,render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -49,10 +51,21 @@ def postlist(request):
             ).order_by('-created')    
     return render(request, "polls/index.html", {"posts": posts})
 
+# SECURITY FLAW 1: Broken access control. 
+# The remove_post view does not properly check if the user is authorized to delete the post.
+# Fix by removing comments from the if-else clause, and remove post.delete() before the if clause.
+
 def remove_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
-    if post.author == request.user:
-        post.delete()
+    post.delete()    
+    #if post.author == request.user:
+    #    post.delete()
+    #else: 
+    #    # Handle the case where user are not authorized to delete the post
+    #    errormessage = f"You are not authorized to delete: {post.title}."
+    #    messages.error(request, errormessage)
+    #    return redirect("polls:postlist")
+            
     return redirect("polls:postlist")
 
 def detail(request, post_id):
@@ -85,7 +98,6 @@ class DetailView(generic.DetailView):
         """
         return Post.objects.filter(created__lte=timezone.now())
         
-
 class ResultsView(generic.DetailView):
     model = Post
     template_name = 'polls/results.html'
