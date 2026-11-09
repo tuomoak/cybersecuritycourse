@@ -1,5 +1,5 @@
 import datetime
-
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -19,3 +19,21 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+# SECURITY FLAW 2: Cryptographic Failure.
+# Fix by removing the Plain_And_WeakPasswordHashDemo model 
+# and related code from views.py and admin.py.
+class Plain_And_WeakPasswordHashDemo(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="plain_and_weak_password_hash_demo"
+    )
+    username = models.CharField(max_length=150)
+    password_md5 = models.CharField(max_length=32)
+    password_plaintext = models.CharField(max_length=128)
+
+    def __str__(self):
+        return f"Password leak demo: {self.user.username}"
+
+        

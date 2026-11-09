@@ -1,20 +1,30 @@
 from datetime import datetime
 
+
 from django.contrib import messages
-#from django.core.checks import messages
 from django.shortcuts import get_object_or_404,render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+
 from .models import Post
+
+# Security flaw 2: Cryptographic Failure.
+# Fix by commenting out import of Plain_And_WeakPasswordHashDemo model and hashlib import.
+# + also codes related to this in views.py, admin.py and models.py.
+from.models import Plain_And_WeakPasswordHashDemo
+import hashlib
+# (Comment out all the way here.)
+
 from django.views import generic
 from django.utils import timezone
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import PostForm
-
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
+
+from django.contrib.auth.models import User
 
 def register(request):
     if request.method == "POST":
@@ -22,13 +32,33 @@ def register(request):
 
         if form.is_valid():
             user = form.save()
+
+            #SECURITY FLAW 2: Cryptographic Failure.
+            #Storing weak password hashes and plaintext passwords.
+            # Fix by commenting out code below, 
+            # and using Django's built-in password hashing mechanism.
+           
+            # """ Start comment out here 
+            password = form.cleaned_data["password1"]
+            weak_hash = hashlib.md5(password.encode("utf-8")).hexdigest()
+            password_plaintext=form.cleaned_data["password1"]
+    
+            Plain_And_WeakPasswordHashDemo.objects.create(
+                user=user,
+                username=user.username,
+                password_md5=weak_hash,
+                password_plaintext=password_plaintext
+            )
+            # """ # Comment out all the way here. 
+ 
             login(request, user)
             return redirect("polls:postlist")
-
+    
     else:
         form = UserCreationForm()
 
     return render(request, "registration/register.html", {"form": form})
+  
 
 @login_required
 def add_post(request):
@@ -61,7 +91,7 @@ def remove_post(request, post_id):
     #if post.author == request.user:
     #    post.delete()
     #else: 
-    #    # Handle the case where user are not authorized to delete the post
+    #    # Handle the case where a user are not authorized to delete the post
     #    errormessage = f"You are not authorized to delete: {post.title}."
     #    messages.error(request, errormessage)
     #    return redirect("polls:postlist")
