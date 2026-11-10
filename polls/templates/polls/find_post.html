@@ -1,0 +1,42 @@
+<a href="{% url 'polls:index' %}">Home page</a>
+
+{% if user.is_authenticated %}
+    <p>Logged in as: {{ user.username }}</p>
+
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Log out</button>
+    </form>
+
+    <p><a href="{% url 'polls:add_post' %}">Add New Post</a></p>
+    
+{% else %}
+    <a href="{% url 'login' %}">Log in</a>
+{% endif %}
+
+<h2>Find post by username</h2>
+
+{% if user.is_authenticated %}
+<form action="{% url 'polls:find_post' %}" method="GET">
+  <p>Username: <br />
+  <input type="search" name="q" value="{{ query }}">
+  </p>
+  <button type="submit">Find</button>
+</form>
+
+{% endif %}
+
+{% if query %}
+<p><b>Results</b></p>
+
+
+Found users: {{ user_count }}
+
+<ul>
+  {% for post in results %}
+  <p><a href="/polls/{{ post.id }}/">{{ post.title }}</a> ({{ post.votes }})</p>
+{% empty %}
+  <li>Results not found.</li>
+  {% endfor %}
+</ul>
+{% endif %}

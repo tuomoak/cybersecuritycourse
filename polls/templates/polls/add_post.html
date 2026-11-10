@@ -4,9 +4,6 @@
 
 {% if user.is_authenticated %}
     <p>Logged in as: {{ user.username }}</p>
-
-    <a href="{% url 'polls:add_post' %}">Add New Post</a>
-
     <form method="post" action="{% url 'logout' %}">
         {% csrf_token %}
         <button type="submit">Log out</button>

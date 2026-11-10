@@ -1,7 +1,6 @@
 from datetime import datetime
-
-
 from django.contrib import messages
+from django.db import connection
 from django.shortcuts import get_object_or_404,render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -76,6 +75,46 @@ def add_post(request):
 
     return render(request, "polls/add_post.html", {"form": form})
 
+@login_required
+def find_post(request):
+    query = request.GET.get("q", "").strip()
+    results = []
+    users = []
+
+    #Security flaw 3: Injection
+    # Fix: Comment out flawed row and sections, 
+    # and remove comments from safe row and safe section. 
+    
+    if query:       
+        # Flawed
+        search = f"SELECT id FROM auth_user WHERE username = '{query}'"
+                    
+        # Safe
+        #users = User.objects.filter(username=query)
+        
+    try:
+        # Flawed section
+        with connection.cursor() as cursor:
+            cursor.execute(search)
+            users = cursor.fetchall()
+        
+        if users:
+            user_ids = [user[0] for user in users]
+            results = Post.objects.filter(author_id__in=user_ids)
+
+        # Flawed section ends
+
+        # Safe section
+        #user_ids = [user.id for user in users]
+        #results = Post.objects.filter(author_id__in=user_ids)
+        
+    except:
+         results = []
+         users = []
+
+    return render(request, "polls/find_post.html", { "query": query, 
+            "results": results, "user_count": len(users) if query else 0 })
+
 def postlist(request):
     posts = Post.objects.filter(created__lte=timezone.now()
             ).order_by('-created')    
@@ -87,7 +126,7 @@ def postlist(request):
 
 def remove_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
-    post.delete()    
+    post.delete()  # comment this out when fixing the flaw  
     #if post.author == request.user:
     #    post.delete()
     #else: 
