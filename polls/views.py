@@ -75,7 +75,7 @@ def sign_in(request):
         # and removing comments from secure section
 
         ### FLAW SECTION STARTS HERE
-        """
+        
         user_check = User.objects.filter(username=username)
                 
         if not user_check.exists():
@@ -87,17 +87,17 @@ def sign_in(request):
                 return redirect("polls:postlist")
             except:
                 error = "Password is incorrect."
-       """ 
+        
         # FLAW SECTION ENDS HERE
                
         # SECURE SECTION STARTS
-        
+        """"
         if user is None:
              error = "Incorrect username or password."
         else:
             login(request, user)
             return redirect("polls:postlist")
-        
+        """
         # SECURE SECTION ENDS
         
     return render(request, "registration/login.html", {"form":form, "error": error})
