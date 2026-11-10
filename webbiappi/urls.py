@@ -17,13 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from django.contrib.auth import views as auth_views
-from polls.views import IndexView
+from polls.views import IndexView, sign_in
 
 urlpatterns = [
     
     path('', IndexView.as_view(), name='home'),
     path('polls/', include('polls.urls')),
     path('admin/', admin.site.urls),
-    path("login/", auth_views.LoginView.as_view(), name="login"),
+    #path("login/", auth_views.LoginView.as_view(), name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+    path("login/", sign_in, name="login"),
 ]

@@ -13,6 +13,12 @@
 
 <h1>Log in</h1>
 
+{% if error %}
+    <p style="color: red;">
+       {{ error }}
+    </p>
+{% endif %}    
+
 {% if form.errors %}
     <p style="color: red;">
         Username or password is incorrect.

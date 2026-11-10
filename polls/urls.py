@@ -11,5 +11,6 @@ urlpatterns = [
     path("list/", views.postlist, name="postlist"),
     path("remove/<int:post_id>/", views.remove_post, name="remove_post"),
     path("register/", views.register, name="register"),
-    path("find/", views.find_post, name="find_post")
+    path("find/", views.find_post, name="find_post"),
+    path("login/", views.sign_in, name="login"),
     ]
