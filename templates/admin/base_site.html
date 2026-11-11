@@ -3,7 +3,22 @@
 {% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
 {% block branding %}
-<h1 id="site-name"><a href="{% url 'admin:index' %}">Polls Administration</a></h1>
+<h1 id="site-name"><a href="{% url 'admin:index' %}">Posts Administration</a></h1>
 {% endblock %}
 
 {% block nav-global %}{% endblock %}
+
+{% block messages %}
+  {{ block.super }}
+
+  {% if security_failure_count %}
+    <ul class="messagelist">
+      <li class="warning">
+        Warning: in the last {{ log_timeframe }} minutes there has been
+        {{ security_failure_count }} failed logins.
+      </li>
+    </ul>
+  {% endif %}
+{% endblock %}
+
+
