@@ -30,13 +30,12 @@ def register(request):
         if form.is_valid():
             user = form.save()
 
-            #SECURITY FLAW 2: Cryptographic Failure.
-            #Storing weak password hashes and plaintext passwords.
+            #SECURITY FLAW 2: CRYPTOGRAPHIC FAILURE
             # Fix by commenting out code below (+ imports)
             # and also related code in models.py, admin.py
             # and just using Django's built-in password hashing mechanism.
            
-            # FLAW STARTS HERE 
+            # FLAW SECTION STARTS HERE 
             password = form.cleaned_data["password1"]
             weak_hash = hashlib.md5(password.encode("utf-8")).hexdigest()
             password_plaintext=form.cleaned_data["password1"]
@@ -47,7 +46,7 @@ def register(request):
                 password_md5=weak_hash,
                 password_plaintext=password_plaintext
             )
-            # FLAW ENDS HERE 
+            # FLAW SECTION ENDS HERE 
  
             login(request, user)
             return redirect("polls:postlist")
@@ -70,7 +69,7 @@ def sign_in(request):
         username=username,
         password=password,
     )   
-        # SECURITY FLAW 4: Identification and Authentication Failures
+        # SECURITY FLAW 4: IDENTIFICATION AND AUTHENTICATION FAILURES
         # Fix by uncommenting flaw section 
         # and removing comments from secure section
 
@@ -124,19 +123,20 @@ def find_post(request):
     results = []
     users = []
 
-    #SECURITY FLAW 3: Injection
-    # Fix: Comment out flawed row and sections, 
-    # and remove comments from safe row and safe section. 
+    # SECURITY FLAW 3: INJECTION
+    # FIX: Comment out flaw sections
+    # and remove comments from secure sections. 
     
     if query:       
-        # Flawed
+        # FLAW SECTION
         search = f"SELECT id FROM auth_user WHERE username = '{query}'"
+        # FLAW SECTION ENDS
                     
-        # Safe
+        # SECURE SECTION
         #users = User.objects.filter(username=query)
-        
+        # SAFE ENDS
     try:
-        # Flawed section
+        # FLAW SECTION STARTS
         with connection.cursor() as cursor:
             cursor.execute(search)
             users = cursor.fetchall()
@@ -144,13 +144,13 @@ def find_post(request):
         if users:
             user_ids = [user[0] for user in users]
             results = Post.objects.filter(author_id__in=user_ids)
+        # FLAW SECTION ENDS
 
-        # Flawed section ends
-
-        # Safe section
+        # SECURE SECTION STARTS
         #user_ids = [user.id for user in users]
         #results = Post.objects.filter(author_id__in=user_ids)
-        
+        # SECURE SECTION ENDS
+
     except:
          results = []
          users = []
@@ -164,23 +164,25 @@ def postlist(request):
             ).order_by('-created')    
     return render(request, "polls/index.html", {"posts": posts})
 
-# SECURITY FLAW 1: Broken access control. 
-# The remove_post view does not properly check if the user 
-# is authorized to delete the post.
-# Fix by removing comments from the if-else clause, 
-# and remove post.delete() before the if clause.
+# SECURITY FLAW 1: BROKEN ACCESS CONTROL. 
+# Fix: comment out flaw section and uncomment secure section.
 
 @login_required
 def remove_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
-    post.delete()  # comment this out when fixing the flaw  
+
+    # FLAW SECTION STARTS 
+    post.delete()    
+    # FLAW SECTION ENDS
+    
+    # SECURE SECTION STARTS
     #if post.author == request.user:
     #    post.delete()
-    #else: 
-    #    # Handle the case where a user are not authorized to delete the post
+    #else:
     #    errormessage = f"You are not authorized to delete: {post.title}."
     #    messages.error(request, errormessage)
     #    return redirect("polls:postlist")
+    # SECURE SECTION ENDS HERE
             
     return redirect("polls:postlist")
 
@@ -215,9 +217,6 @@ def vote(request, post_id):
               
     post.save()
 
-    # Always return an HttpResponseRedirect after successfully dealing
-    # with POST data. This prevents data from being posted twice if a
-    # user hits the Back button.
     return HttpResponseRedirect(reverse('polls:detail', args=(post.id,)))
     
 class IndexView(generic.ListView):

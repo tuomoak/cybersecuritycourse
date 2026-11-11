@@ -43,9 +43,10 @@ class SecurityEvent(models.Model):
     def __str__(self):
         return f"{self.get_event_display()} — {self.timestamp}"
 
-# SECURITY FLAW 2: Cryptographic Failure.
+# SECURITY FLAW 2: CRYPTOGRAPHIC FAILURE.
 # Fix by removing the Plain_And_WeakPasswordHashDemo model 
 # and related code from views.py and admin.py.
+
 class Plain_And_WeakPasswordHashDemo(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,

@@ -4,16 +4,16 @@ from django.utils import timezone
 
 from .models import SecurityEvent
 
-
 def security_warning(request):
 
     match = getattr(request, "resolver_match", None)
 
-    # SECURITY FLAW 5: Security Logging and Monitoring Failure
+    # SECURITY FLAW 5: SECURITY LOGGING AND MONITORING FAILURE
     # Fix: Comment out the flaw section 
     # and remove comments from secure section.
 
-    # FLAW SECTION STARTS 
+    # FLAW SECTION STARTS
+    # The query does not happen, because there are no refered match.
     if match or match.app_name == "non-existing-site-dongle_dingle":
         return {}
     # FLAW SECTION ENDS
