@@ -124,19 +124,19 @@ def find_post(request):
     users = []
 
     # SECURITY FLAW 3: INJECTION
-    # FIX: Comment out flaw sections
-    # and remove comments from secure sections. 
+    # FIX: Comment out two flaw sections
+    # and remove comments from two secure sections. 
     
     if query:       
-        # FLAW SECTION
+        # FLAW SECTION 1/2
         search = f"SELECT id FROM auth_user WHERE username = '{query}'"
-        # FLAW SECTION ENDS
+        # FLAW SECTION 1/2 ENDS
                     
-        # SECURE SECTION
+        # SECURE SECTION 1/2
         #users = User.objects.filter(username=query)
-        # SAFE ENDS
+        # SECURE SECTION 1/2 ENDS 
     try:
-        # FLAW SECTION STARTS
+        # FLAW SECTION 2/2 STARTS
         with connection.cursor() as cursor:
             cursor.execute(search)
             users = cursor.fetchall()
@@ -144,12 +144,12 @@ def find_post(request):
         if users:
             user_ids = [user[0] for user in users]
             results = Post.objects.filter(author_id__in=user_ids)
-        # FLAW SECTION ENDS
+        # FLAW SECTION 2/2 ENDS
 
-        # SECURE SECTION STARTS
+        # SECURE SECTION 2/2 STARTS
         #user_ids = [user.id for user in users]
         #results = Post.objects.filter(author_id__in=user_ids)
-        # SECURE SECTION ENDS
+        # SECURE SECTION 2/2 ENDS
 
     except:
          results = []
